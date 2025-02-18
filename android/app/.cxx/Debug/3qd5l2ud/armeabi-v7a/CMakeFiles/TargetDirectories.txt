@@ -1,0 +1,2 @@
+/Users/shivdvaio/Mini-Product-Catalog-App/android/app/.cxx/Debug/3qd5l2ud/armeabi-v7a/CMakeFiles/edit_cache.dir
+/Users/shivdvaio/Mini-Product-Catalog-App/android/app/.cxx/Debug/3qd5l2ud/armeabi-v7a/CMakeFiles/rebuild_cache.dir
