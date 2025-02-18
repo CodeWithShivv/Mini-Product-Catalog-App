@@ -1,1 +1,41 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"mini-product-catalog-app","appId":"1:781966192077:android:5bd08a131d78c230bfe884","fileOutput":"android/app/google-services.json"}},"ios":{"default":{"projectId":"mini-product-catalog-app","appId":"1:781966192077:ios:76fa774b5c96c7dcbfe884","uploadDebugSymbols":false,"fileOutput":"ios/Runner/GoogleService-Info.plist"}},"macos":{"default":{"projectId":"mini-product-catalog-app","appId":"1:781966192077:ios:76fa774b5c96c7dcbfe884","uploadDebugSymbols":false,"fileOutput":"macos/Runner/GoogleService-Info.plist"}},"dart":{"lib/firebase_options.dart":{"projectId":"mini-product-catalog-app","configurations":{"android":"1:781966192077:android:5bd08a131d78c230bfe884","ios":"1:781966192077:ios:76fa774b5c96c7dcbfe884","macos":"1:781966192077:ios:76fa774b5c96c7dcbfe884","web":"1:781966192077:web:08b4a78a52147b57bfe884","windows":"1:781966192077:web:fe95648df19533c3bfe884"}}}}}}
+{
+    "flutter": {
+        "platforms": {
+            "android": {
+                "default": {
+                    "projectId": "mini-product-catalog-app",
+                    "appId": "1:781966192077:android:5bd08a131d78c230bfe884",
+                    "fileOutput": "android/app/google-services.json"
+                }
+            },
+            "ios": {
+                "default": {
+                    "projectId": "mini-product-catalog-app",
+                    "appId": "1:781966192077:ios:76fa774b5c96c7dcbfe884",
+                    "uploadDebugSymbols": false,
+                    "fileOutput": "ios/Runner/GoogleService-Info.plist"
+                }
+            },
+            "macos": {
+                "default": {
+                    "projectId": "mini-product-catalog-app",
+                    "appId": "1:781966192077:ios:76fa774b5c96c7dcbfe884",
+                    "uploadDebugSymbols": false,
+                    "fileOutput": "macos/Runner/GoogleService-Info.plist"
+                }
+            },
+            "dart": {
+                "lib/firebase_options.dart": {
+                    "projectId": "mini-product-catalog-app",
+                    "configurations": {
+                        "android": "1:781966192077:android:5bd08a131d78c230bfe884",
+                        "ios": "1:781966192077:ios:76fa774b5c96c7dcbfe884",
+                        "macos": "1:781966192077:ios:76fa774b5c96c7dcbfe884",
+                        "web": "1:781966192077:web:08b4a78a52147b57bfe884",
+                        "windows": "1:781966192077:web:fe95648df19533c3bfe884"
+                    }
+                }
+            }
+        }
+    }
+}
