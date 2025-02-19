@@ -5,7 +5,7 @@ part 'product.freezed.dart';
 part 'product.g.dart';
 
 @freezed
-@HiveType(typeId: 1)
+@HiveType(typeId: 1) // Unique Type ID for Hive
 class Product with _$Product {
   factory Product({
     @HiveField(0) required int id,
@@ -19,10 +19,23 @@ class Product with _$Product {
 
   factory Product.fromJson(Map<String, dynamic> json) =>
       _$ProductFromJson(json);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'price': price,
+      'description': description,
+      'category': category,
+      'image': image,
+      'rating': rating.toJson(),
+    };
+  }
 }
 
 @freezed
-@HiveType(typeId: 2)
+@HiveType(typeId: 2) // Unique Type ID for Hive
 class Rating with _$Rating {
   factory Rating({
     @HiveField(0) required double rate,

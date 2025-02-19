@@ -4,7 +4,7 @@ import 'package:mini_product_catalog_app/core/data/local/app_database.dart';
 import 'package:mini_product_catalog_app/core/router/app_router.dart';
 import 'package:mini_product_catalog_app/core/services/connectivity_service.dart';
 import 'package:mini_product_catalog_app/core/services/firebase_service.dart';
-import 'package:mini_product_catalog_app/features/products/data/product_repository.dart';
+import 'package:mini_product_catalog_app/features/products_listing/data/repositories/product_repository.dart';
 
 final GetIt getIt = GetIt.instance;
 

@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:mini_product_catalog_app/features/products/domain/entities/product.dart';
+import 'package:mini_product_catalog_app/features/products_listing/domain/entities/product.dart';
 
 abstract class ProductState extends Equatable {
   @override

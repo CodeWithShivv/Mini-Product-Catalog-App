@@ -1,7 +1,7 @@
 import 'package:hive/hive.dart';
 import 'package:mini_product_catalog_app/core/data/local/app_database_constants.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:mini_product_catalog_app/features/products/domain/entities/product.dart';
+import 'package:mini_product_catalog_app/features/products_listing/domain/entities/product.dart';
 import 'package:mini_product_catalog_app/core/services/dependency_locator.dart';
 import 'package:logger/logger.dart';
 

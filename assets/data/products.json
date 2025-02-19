@@ -178,5 +178,98 @@
     "category": "women's clothing",
     "image": "https://fakestoreapi.com/img/61pHAEJ4NML._AC_UX679_.jpg",
     "rating": { "rate": 3.6, "count": 145 }
-  }
+  },
+  
+    {
+      "id": 21,
+      "title": "Crucial 256GB SSD NVMe PCIe Gen3 Performance Boost",
+      "price": 109,
+      "description": "High-speed NVMe PCIe Gen3 SSD with SLC Cache technology for faster boot times and improved system performance. Supports TRIM, Garbage Collection, and ECC for enhanced reliability.",
+      "category": "electronics",
+      "image": "https://fakestoreapi.com/img/71kWymZ+c+L._AC_SX679_.jpg",
+      "rating": { "rate": 4.8, "count": 319 }
+    },
+    {
+      "id": 22,
+      "title": "Seagate 5TB Portable External Hard Drive for Gaming",
+      "price": 114,
+      "description": "Expand your gaming library with a massive 5TB portable hard drive. Compatible with PlayStation, Xbox, and PC. Sleek design with easy plug-and-play setup.",
+      "category": "electronics",
+      "image": "https://fakestoreapi.com/img/61mtL65D4cL._AC_SX679_.jpg",
+      "rating": { "rate": 4.8, "count": 400 }
+    },
+    {
+      "id": 23,
+      "title": "LG 22-Inch Full HD IPS Ultra-Slim Monitor",
+      "price": 599,
+      "description": "22-inch Full HD IPS display with vibrant colors and wide viewing angles. 75Hz refresh rate with FreeSync support for smooth visuals. Ultra-thin design with zero-frame bezel.",
+      "category": "electronics",
+      "image": "https://fakestoreapi.com/img/81QpkIctqPL._AC_SX679_.jpg",
+      "rating": { "rate": 2.9, "count": 250 }
+    },
+    {
+      "id": 24,
+      "title": "Dell 49-Inch Ultrawide Curved Gaming Monitor",
+      "price": 999.99,
+      "description": "49-inch super ultrawide curved gaming monitor with a 144Hz refresh rate and 1ms response time. QLED technology with HDR support delivers stunning colors and sharp visuals.",
+      "category": "electronics",
+      "image": "https://fakestoreapi.com/img/81Zt42ioCgL._AC_SX679_.jpg",
+      "rating": { "rate": 2.2, "count": 140 }
+    },
+    {
+      "id": 25,
+      "title": "Columbia Women's 3-in-1 Snowboard Jacket",
+      "price": 56.99,
+      "description": "Versatile 3-in-1 winter coat with detachable fleece liner. Waterproof, windproof, and breathable design for all-season comfort. Adjustable hood and cuffs for a perfect fit.",
+      "category": "women's clothing",
+      "image": "https://fakestoreapi.com/img/51Y5NI-I5jL._AC_UX679_.jpg",
+      "rating": { "rate": 2.6, "count": 235 }
+    },
+    {
+      "id": 26,
+      "title": "Levi's Women's Faux Leather Moto Biker Jacket",
+      "price": 29.95,
+      "description": "Stylish faux leather biker jacket with a removable hood. Soft lining for comfort, zippered pockets for storage, and a flattering slim fit.",
+      "category": "women's clothing",
+      "image": "https://fakestoreapi.com/img/81XH0e8fefL._AC_UY879_.jpg",
+      "rating": { "rate": 2.9, "count": 340 }
+    },
+    {
+      "id": 27,
+      "title": "North Face Women's Waterproof Windbreaker",
+      "price": 39.99,
+      "description": "Lightweight and packable waterproof rain jacket with adjustable hood and waist drawstring. Perfect for hiking, travel, and daily wear.",
+      "category": "women's clothing",
+      "image": "https://fakestoreapi.com/img/71HblAHs5xL._AC_UY879_-2.jpg",
+      "rating": { "rate": 3.8, "count": 679 }
+    },
+    {
+      "id": 28,
+      "title": "Calvin Klein Women's Boat Neck Short Sleeve Tee",
+      "price": 9.85,
+      "description": "Soft and stretchy short sleeve boat neck T-shirt made with high-quality rayon-spandex blend. Lightweight fabric provides a comfortable fit.",
+      "category": "women's clothing",
+      "image": "https://fakestoreapi.com/img/71z3kpMAYsL._AC_UY879_.jpg",
+      "rating": { "rate": 4.7, "count": 130 }
+    },
+    {
+      "id": 29,
+      "title": "Nike Women's Dri-FIT Moisture-Wicking Shirt",
+      "price": 7.95,
+      "description": "Lightweight, breathable short sleeve T-shirt with moisture-wicking fabric to keep you cool and dry. Perfect for workouts and casual wear.",
+      "category": "women's clothing",
+      "image": "https://fakestoreapi.com/img/51eg55uWmdL._AC_UX679_.jpg",
+      "rating": { "rate": 4.5, "count": 146 }
+    },
+    {
+      "id": 30,
+      "title": "Tommy Hilfiger Women's Casual Cotton T-Shirt",
+      "price": 12.99,
+      "description": "Classic cotton short sleeve T-shirt with a fashionable V-neck design. Soft and breathable fabric for all-day comfort.",
+      "category": "women's clothing",
+      "image": "https://fakestoreapi.com/img/61pHAEJ4NML._AC_UX679_.jpg",
+      "rating": { "rate": 3.6, "count": 145 }
+    }
+  
+  
 ]
