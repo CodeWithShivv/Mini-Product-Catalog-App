@@ -1,6 +1,4 @@
-import 'dart:developer';
 import 'package:flutter/foundation.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:mini_product_catalog_app/core/data/local/app_database.dart';
 import 'package:mini_product_catalog_app/core/data/local/app_database_constants.dart';
 import 'package:mini_product_catalog_app/core/services/connectivity_service.dart';
@@ -14,10 +12,10 @@ class ProductRepository {
   final AppDatabase _appDatabase = getIt<AppDatabase>();
   final Logger _logger = getIt<Logger>();
 
-  List<Product>? remoteProducts; // Cached remote products
+  List<Product>? remoteProducts; 
 
   /// **Fetch products based on availability (online/offline)**
-  Future<List<Product>> fetchProducts() async {
+  Future<List<Product>> fetchProducts({int page = 1, int limit = 10}) async {
     bool isOnline = await getIt<ConnectivityService>().isConnected();
     return isOnline ? await _fetchAndSyncProducts() : await getLocalProducts();
   }
@@ -34,6 +32,27 @@ class ProductRepository {
       _logger.e("Error fetching products from Firestore: $e");
       return [];
     }
+  }
+
+  Future<List<Product>> searchProducts(String query) async {
+    bool isOnline = await getIt<ConnectivityService>().isConnected();
+    return isOnline
+        ? await _firebaseService.searchProducts(query) // Online search
+        : await _searchLocalProducts(query); // Offline search
+  }
+
+  /// **Search for products locally**
+  Future<List<Product>> _searchLocalProducts(String query) async {
+    List<Product> localProducts =
+        await _appDatabase.getAllData(AppDataBaseConstants.productsBox);
+
+    if (query.isEmpty) return localProducts;
+
+    String lowerQuery = query.toLowerCase().trim();
+    return localProducts.where((product) {
+      return product.title.toLowerCase().contains(lowerQuery) ||
+          product.description.toLowerCase().contains(lowerQuery);
+    }).toList();
   }
 
   /// **Fetch and sync remote products**
@@ -79,7 +98,6 @@ class ProductRepository {
   }
 }
 
-/// **Helper function that processes products for sync (can run in an isolate)**
 Map<int, Product> processProductsForSync(Map<String, dynamic> data) {
   Map<dynamic, Product> existingProducts =
       data['boxData'] as Map<dynamic, Product>;

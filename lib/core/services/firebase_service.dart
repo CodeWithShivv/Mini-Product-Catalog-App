@@ -47,6 +47,26 @@ class FirebaseService {
     }
   }
 
+  Future<List<Product>> searchProducts(String query) async {
+    try {
+      String lowerQuery = query.toLowerCase().trim();
+
+      QuerySnapshot snapshot = await _firestore.collection('products').get();
+      List<Product> filteredProducts = snapshot.docs
+          .map((doc) => Product.fromJson(doc.data() as Map<String, dynamic>))
+          .where((product) =>
+              product.title.toLowerCase().contains(lowerQuery) ||
+              product.description.toLowerCase().contains(lowerQuery))
+          .toList();
+
+      _logger.i("Search results: ${filteredProducts.length} products found.");
+      return filteredProducts;
+    } catch (e) {
+      _logger.e("Error searching products: $e");
+      return [];
+    }
+  }
+
   /// Upload products from `assets/products.json` to Firestore (if not already uploaded)
   Future<void> uploadProductsFromAssets() async {
     try {
