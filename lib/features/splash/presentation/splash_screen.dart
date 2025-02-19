@@ -14,7 +14,7 @@ class SplashScreen extends StatelessWidget {
     return BlocListener<SplashBloc, SplashState>(
       listener: (context, state) {
         if (state is SplashSuccess) {
-          appRouter.go('/products-listing-screen');
+          appRouter.go(AppRoutes.productsListing);
         } else if (state is SplashFailure) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(state.error)),

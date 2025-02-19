@@ -5,7 +5,6 @@ import 'package:mini_product_catalog_app/core/router/app_router.dart';
 import 'package:mini_product_catalog_app/features/favorites/blocs/favorites_bloc.dart';
 import 'package:mini_product_catalog_app/features/favorites/blocs/favourites_event.dart';
 import 'package:mini_product_catalog_app/features/favorites/blocs/favourites_state.dart';
-import 'package:mini_product_catalog_app/features/products_listing/presentation/widgets/product_card.dart';
 
 class FavoritesScreen extends StatelessWidget {
   const FavoritesScreen({super.key});
@@ -43,7 +42,7 @@ class FavoritesScreen extends StatelessWidget {
                   },
                   child: GestureDetector(
                     onTap: () {
-                      appRouter.push('/product-view-screen',
+                      appRouter.push(AppRoutes.productDetail,
                           extra: item.product);
                     },
                     child: Hero(

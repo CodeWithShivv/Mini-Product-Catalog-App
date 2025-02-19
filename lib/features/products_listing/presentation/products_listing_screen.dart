@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mini_product_catalog_app/core/router/app_router.dart';
 import 'package:mini_product_catalog_app/core/widgets/lottie_loader.dart';
 import 'package:mini_product_catalog_app/features/cart/presentation/widgets/cart_widget.dart';
+import 'package:mini_product_catalog_app/features/favorites/presentation/widgets/favorites_icon.dart';
 import 'package:mini_product_catalog_app/features/products_listing/bloc/product_bloc.dart';
 import 'package:mini_product_catalog_app/features/products_listing/bloc/product_event.dart';
 import 'package:mini_product_catalog_app/features/products_listing/bloc/product_state.dart';
@@ -27,15 +28,7 @@ class ProductsListingScreen extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: const Text("Products"),
-          actions: [
-            CartWidget(),
-            IconButton(
-              icon: const Icon(Icons.favorite_border),
-              onPressed: () {
-                appRouter.push('/favorites-screen');
-              },
-            ),
-          ],
+          actions: [CartWidget(), FavoritesIconWidget()],
         ),
         body: GestureDetector(
           onTap: () {

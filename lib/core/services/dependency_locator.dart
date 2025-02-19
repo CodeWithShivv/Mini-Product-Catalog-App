@@ -3,7 +3,6 @@ import 'package:hive/hive.dart';
 import 'package:logger/logger.dart';
 import 'package:mini_product_catalog_app/core/data/local/app_database.dart';
 import 'package:mini_product_catalog_app/core/data/local/app_database_constants.dart';
-import 'package:mini_product_catalog_app/core/router/app_router.dart';
 import 'package:mini_product_catalog_app/core/services/connectivity_service.dart';
 import 'package:mini_product_catalog_app/core/services/firebase_service.dart';
 import 'package:mini_product_catalog_app/features/cart/domain/entities/cart_entity.dart'

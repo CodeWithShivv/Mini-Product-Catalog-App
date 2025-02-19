@@ -22,7 +22,7 @@ class CartWidget extends StatelessWidget {
             IconButton(
               icon: const Icon(Icons.shopping_cart),
               onPressed: () {
-                appRouter.push('/cart-screen');
+                appRouter.push(AppRoutes.cart);
               },
             ),
             if (cartItemCount > 0) // Show badge only if cart has items

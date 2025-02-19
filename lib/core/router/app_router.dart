@@ -7,30 +7,43 @@ import 'package:mini_product_catalog_app/features/splash/presentation/splash_scr
 import 'package:mini_product_catalog_app/features/products_listing/domain/entities/product.dart';
 import 'package:mini_product_catalog_app/features/favorites/presentation/favorites_screen.dart';
 
+class AppRoutes {
+  static const String splash = '/';
+  static const String productsListing = '/products-listing-screen';
+  static const String productDetail = '/product-view-screen';
+  static const String cart = '/cart-screen';
+  static const String favorites = '/favorites-screen';
+}
+
 final GoRouter appRouter = GoRouter(
-  initialLocation: '/',
+  initialLocation: AppRoutes.splash,
   routes: [
     GoRoute(
-      path: '/',
+      path: AppRoutes.splash,
       builder: (context, state) => SplashScreen(),
     ),
     GoRoute(
-      path: '/products-listing-screen',
+      path: AppRoutes.productsListing,
       builder: (context, state) => ProductsListingScreen(),
     ),
     GoRoute(
-      path: '/product-view-screen',
+      path: AppRoutes.productDetail,
       builder: (context, state) {
-        final product = state.extra as Product;
+        final product = state.extra as Product?;
+        if (product == null) {
+          return const Scaffold(
+            body: Center(child: Text('Invalid Product Data')),
+          );
+        }
         return ProductViewScreen(product: product);
       },
     ),
     GoRoute(
-      path: '/cart-screen',
+      path: AppRoutes.cart,
       builder: (context, state) => CartScreen(),
     ),
     GoRoute(
-      path: '/favorites-screen',
+      path: AppRoutes.favorites,
       builder: (context, state) => FavoritesScreen(),
     ),
   ],

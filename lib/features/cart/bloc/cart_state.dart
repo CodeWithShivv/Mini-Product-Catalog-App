@@ -19,3 +19,4 @@ class CartLoaded extends CartState {
   @override
   List<Object?> get props => [cartItems, totalPrice];
 }
+

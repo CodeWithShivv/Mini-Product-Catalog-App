@@ -17,7 +17,7 @@ class ProductCard extends StatelessWidget {
     return IntrinsicHeight(
       child: GestureDetector(
         onTap: () {
-          appRouter.push('/product-view-screen', extra: product);
+          appRouter.push(AppRoutes.productDetail, extra: product);
         },
         child: Card(
           shape:
