@@ -2,6 +2,7 @@ import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
 import 'package:mini_product_catalog_app/core/data/local/app_database.dart';
 import 'package:mini_product_catalog_app/core/router/app_router.dart';
+import 'package:mini_product_catalog_app/core/services/connectivity_service.dart';
 import 'package:mini_product_catalog_app/core/services/firebase_service.dart';
 import 'package:mini_product_catalog_app/features/products/data/product_repository.dart';
 
@@ -23,7 +24,8 @@ Future<void> setupDependencyInjection() async {
   getIt
     ..registerLazySingleton<FirebaseService>(() => firebaseService)
     ..registerLazySingleton<AppDatabase>(() => appDatabase)
-    ..registerLazySingleton<ProductRepository>(() => ProductRepository());
+    ..registerLazySingleton<ProductRepository>(() => ProductRepository())
+    ..registerLazySingleton(() => ConnectivityService());
 
   logger.i("Dependency Injection setup completed successfully.");
 }

@@ -35,6 +35,8 @@ class AppDatabase {
     }
   }
 
+
+
   // Future<void> _openAllBoxes() async {
   //   try {
   //     await Hive.openBox<Product>(AppDataBaseConstants.productsBox);

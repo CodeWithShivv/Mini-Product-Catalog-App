@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mini_product_catalog_app/core/router/app_router.dart';
+import 'package:mini_product_catalog_app/core/widgets/lottie_loader.dart';
 import 'package:mini_product_catalog_app/features/splash/bloc/splash_bloc.dart';
 import 'package:mini_product_catalog_app/features/splash/bloc/splash_event.dart';
 import 'package:mini_product_catalog_app/features/splash/bloc/splash_state.dart';
@@ -13,7 +14,7 @@ class SplashScreen extends StatelessWidget {
     return BlocListener<SplashBloc, SplashState>(
       listener: (context, state) {
         if (state is SplashSuccess) {
-          Future.microtask(() => appRouter.go('/products-screen'));
+          appRouter.go('/products-screen');
         }
       },
       child: Scaffold(
@@ -33,20 +34,7 @@ class SplashScreen extends StatelessWidget {
 
   Widget _buildLoadingView() {
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // Image.asset(
-          //   'assets/logo.png',
-          //   width: 100,
-          //   height: 100,
-          // ),
-          const SizedBox(height: 20),
-          const CircularProgressIndicator(),
-          const SizedBox(height: 10),
-          const Text("Syncing data... Please wait"),
-        ],
-      ),
+      child: LottieLoader(width: 150, height: 150),
     );
   }
 

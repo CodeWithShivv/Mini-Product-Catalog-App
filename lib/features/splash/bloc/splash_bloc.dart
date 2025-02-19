@@ -19,6 +19,7 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
     emit(SplashLoading());
 
     try {
+      //Synchronization process between the remote and local databases.
       await productRepository.syncProducts();
 
       emit(SplashSuccess());
