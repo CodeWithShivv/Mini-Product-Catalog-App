@@ -1,5 +1,7 @@
 import 'package:hive/hive.dart';
 import 'package:mini_product_catalog_app/core/data/local/app_database_constants.dart';
+import 'package:mini_product_catalog_app/features/cart/domain/entities/cart_entity.dart';
+import 'package:mini_product_catalog_app/features/favorites/domain/entities/favorites_entity.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:mini_product_catalog_app/features/products_listing/domain/entities/product.dart';
 import 'package:mini_product_catalog_app/core/services/dependency_locator.dart';
@@ -15,6 +17,8 @@ class AppDatabase {
 
       Hive.registerAdapter(ProductAdapter());
       Hive.registerAdapter(RatingAdapter());
+      Hive.registerAdapter(CartItemAdapter());
+      Hive.registerAdapter(FavoritesEntityAdapter());
 
       logger.i("Hive initialized successfully.");
     } catch (e) {
@@ -34,16 +38,6 @@ class AppDatabase {
       rethrow;
     }
   }
-
-
-
-  // Future<void> _openAllBoxes() async {
-  //   try {
-  //     await Hive.openBox<Product>(AppDataBaseConstants.productsBox);
-  //   } catch (e) {
-  //     logger.e("Error opening boxes: $e");
-  //   }
-  // }
 
   Future<void> saveData<T>(String boxName, String key, T data) async {
     try {

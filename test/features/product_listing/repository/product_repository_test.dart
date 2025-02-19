@@ -7,9 +7,8 @@ import 'package:mini_product_catalog_app/core/services/dependency_locator.dart';
 import 'package:mini_product_catalog_app/core/services/firebase_service.dart';
 import 'package:mini_product_catalog_app/features/products_listing/data/repositories/product_repository.dart';
 import 'package:mini_product_catalog_app/features/products_listing/domain/entities/product.dart';
-import '../../../mocks/mocks.dart'; // Import your mocks file
+import '../../../mocks/mocks.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:hive/hive.dart';
 
 void main() {
   late ProductRepository productRepository;

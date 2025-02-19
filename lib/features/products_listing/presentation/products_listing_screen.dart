@@ -1,9 +1,10 @@
-import 'dart:math' as math;
-
 import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mini_product_catalog_app/core/router/app_router.dart';
 import 'package:mini_product_catalog_app/core/widgets/lottie_loader.dart';
+import 'package:mini_product_catalog_app/features/cart/presentation/widgets/cart_widget.dart';
 import 'package:mini_product_catalog_app/features/products_listing/bloc/product_bloc.dart';
 import 'package:mini_product_catalog_app/features/products_listing/bloc/product_event.dart';
 import 'package:mini_product_catalog_app/features/products_listing/bloc/product_state.dart';
@@ -24,7 +25,18 @@ class ProductsListingScreen extends StatelessWidget {
         connectivityService: getIt(),
       )..add(FetchProducts()),
       child: Scaffold(
-        appBar: AppBar(title: const Text("Products")),
+        appBar: AppBar(
+          title: const Text("Products"),
+          actions: [
+            CartWidget(),
+            IconButton(
+              icon: const Icon(Icons.favorite_border),
+              onPressed: () {
+                appRouter.push('/favorites-screen');
+              },
+            ),
+          ],
+        ),
         body: GestureDetector(
           onTap: () {
             FocusScope.of(context).unfocus();
@@ -68,23 +80,16 @@ class ProductsListingScreen extends StatelessWidget {
 
   SliverAppBar _buildSliverAppBar() {
     return SliverAppBar(
-      expandedHeight: 100.0,
+      expandedHeight: 70.0,
       pinned: true,
       flexibleSpace: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.blue, Colors.green],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
+        decoration: BoxDecoration(),
         child: FlexibleSpaceBar(
           title: const Text('Products', style: TextStyle(color: Colors.white)),
-          background: Container(), // Empty container for additional background
         ),
       ),
       bottom: PreferredSize(
-        preferredSize: const Size.fromHeight(40.0), // Height for search bar
+        preferredSize: const Size.fromHeight(40.0),
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 14),
           child: ProductSearchBar(controller: controller),
@@ -108,7 +113,7 @@ class ProductsListingScreen extends StatelessWidget {
             crossAxisCount: 2,
             crossAxisSpacing: 8,
             mainAxisSpacing: 8,
-            childAspectRatio: 0.8,
+            childAspectRatio: 0.47,
           ),
         ),
       );
