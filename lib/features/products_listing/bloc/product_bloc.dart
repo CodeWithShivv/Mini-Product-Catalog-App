@@ -1,7 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
-
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mini_product_catalog_app/features/products_listing/bloc/product_event.dart';
 import 'package:mini_product_catalog_app/features/products_listing/bloc/product_state.dart';
@@ -22,11 +19,16 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
   }) : super(ProductInitial()) {
     on<FetchProducts>(_onFetchProducts);
     on<SearchProducts>(_onSearchProducts);
-
+    on<ResetProducts>(_onInitialProductsSet);
     _connectivitySubscription =
         connectivityService.connectivityStream.listen((_) {
       add(FetchProducts());
     });
+  }
+
+  Future<void> _onInitialProductsSet(
+    ResetProducts event, Emitter<ProductState> emit) async {
+    emit(ProductLoaded(_allProducts));
   }
 
   Future<void> _onFetchProducts(
@@ -43,8 +45,9 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
   Future<void> _onSearchProducts(
       SearchProducts event, Emitter<ProductState> emit) async {
     _searchDebounce?.cancel();
+    emit(ProductLoading());
     final completer = Completer<void>();
-    _searchDebounce = Timer(const Duration(milliseconds: 400), () async {
+    _searchDebounce = Timer(const Duration(milliseconds: 500), () async {
       final query = event.query.toLowerCase().trim();
 
       if (query.isEmpty) {

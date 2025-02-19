@@ -6,8 +6,7 @@ import 'package:mini_product_catalog_app/features/products_listing/bloc/product_
 class ProductSearchBar extends StatelessWidget {
   final TextEditingController controller;
 
-  const ProductSearchBar({Key? key, required this.controller})
-      : super(key: key);
+  const ProductSearchBar({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +31,7 @@ class ProductSearchBar extends StatelessWidget {
             icon: const Icon(Icons.clear, color: Colors.grey),
             onPressed: () {
               controller.clear();
+              context.read<ProductBloc>().add(ResetProducts());
             },
           ),
           border: InputBorder.none,
