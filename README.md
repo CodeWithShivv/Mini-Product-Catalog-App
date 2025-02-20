@@ -1,5 +1,19 @@
 # Mini Product Catalog App
 
+## Video
+https://drive.google.com/file/d/10v9-EGOzF33Och5pVaHEcTlzxJpHq_zj/view?usp=sharing
+
+## Screenshots
+![Screenshot 2025-02-20 at 10 25 33 AM](https://github.com/user-attachments/assets/4158bef4-2833-4730-8eac-4a13e88aef9f)
+
+
+![Screenshot 2025-02-20 at 10 25 48 AM](https://github.com/user-attachments/assets/fe4d00c5-fc61-43d7-98e3-db488adf83ff)
+
+![Screenshot 2025-02-20 at 10 26 12 AM](https://github.com/user-attachments/assets/1f007fb7-e6c2-47ef-a16d-e019c3fb5c10)
+![Screenshot 2025-02-20 at 10 26 30 AM](https://github.com/user-attachments/assets/8f0d21f7-69ad-4a23-bcc3-b1f693184e4c)
+
+
+
 ## Overview
 The **Mini Product Catalog App** is a Flutter-based application that allows users to browse products efficiently. It features **offline-first synchronization**, **pagination**, **search**, and **state management** using BLoC. The app follows the **MVVM Architecture** and a **Feature-Based Folder Structure** for maintainability and scalability.
 
