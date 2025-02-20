@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mini_product_catalog_app/features/cart/bloc/cart_bloc.dart';
 import 'package:mini_product_catalog_app/features/cart/bloc/cart_event.dart';
-import 'package:mini_product_catalog_app/features/cart/domain/entities/cart_entity.dart';
 import 'package:mini_product_catalog_app/features/favorites/blocs/favorites_bloc.dart';
 import 'package:mini_product_catalog_app/features/favorites/blocs/favourites_event.dart';
 import 'package:mini_product_catalog_app/features/favorites/blocs/favourites_state.dart';

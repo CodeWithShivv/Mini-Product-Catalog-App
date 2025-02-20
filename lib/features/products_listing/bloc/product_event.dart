@@ -15,3 +15,4 @@ class SearchProducts extends ProductEvent {
 class FetchMoreProducts extends ProductEvent {}
 
 class ResetProducts extends ProductEvent {}
+

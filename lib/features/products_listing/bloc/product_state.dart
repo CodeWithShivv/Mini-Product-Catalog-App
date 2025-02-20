@@ -22,9 +22,29 @@ class ProductError extends ProductState {
 class ProductSearchResults extends ProductState {
   final List<Product> searchResults;
   ProductSearchResults(this.searchResults);
+
+  @override
+  List<Object?> get props => [searchResults];
 }
 
 class ProductLoaded extends ProductState {
   final List<Product> products;
-  ProductLoaded(this.products);
+  final bool hasMore;
+  final bool isPaginating;
+
+  ProductLoaded({
+    required this.products,
+    this.hasMore = true,
+    this.isPaginating = false,
+  });
+
+  @override
+  List<Object?> get props => [products, hasMore, isPaginating];
+}
+
+class ProductPaginating extends ProductState {
+  final List<Product> products;
+  final bool hasMore;
+
+  ProductPaginating({required this.products, required this.hasMore});
 }

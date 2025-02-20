@@ -12,56 +12,83 @@ class ProductRepository {
   final AppDatabase _appDatabase = getIt<AppDatabase>();
   final Logger _logger = getIt<Logger>();
 
-  List<Product>? remoteProducts; 
+  final List<Product> _cachedProducts = [];
+  bool _hasMore = true;
 
-  /// **Fetch products based on availability (online/offline)**
-  Future<List<Product>> fetchProducts({int page = 1, int limit = 10}) async {
-    bool isOnline = await getIt<ConnectivityService>().isConnected();
-    return isOnline ? await _fetchAndSyncProducts() : await getLocalProducts();
-  }
+  final List<Product> _cachedLocalProducts = [];
+  bool _localHasMore = true;
 
-  /// **Fetch products from Firestore**
-  Future<List<Product>> fetchRemoteProducts() async {
-    try {
-      if (remoteProducts?.isNotEmpty ?? false) {
-        return remoteProducts!;
-      }
-      remoteProducts = await _firebaseService.fetchProducts();
-      return remoteProducts ?? [];
-    } catch (e) {
-      _logger.e("Error fetching products from Firestore: $e");
-      return [];
-    }
-  }
-
-  Future<List<Product>> searchProducts(String query) async {
+  /// **Fetch products with pagination**
+  Future<List<Product>> fetchProducts({bool isFirstFetch = false}) async {
     bool isOnline = await getIt<ConnectivityService>().isConnected();
     return isOnline
-        ? await _firebaseService.searchProducts(query) // Online search
-        : await _searchLocalProducts(query); // Offline search
+        ? await _fetchAndSyncProducts(isFirstFetch)
+        : await getLocalProducts(isFirstFetch);
   }
 
-  /// **Search for products locally**
-  Future<List<Product>> _searchLocalProducts(String query) async {
-    List<Product> localProducts =
-        await _appDatabase.getAllData(AppDataBaseConstants.productsBox);
+  /// **Fetch and sync remote products (handles pagination)**
+  Future<List<Product>> _fetchAndSyncProducts(bool isFirstFetch) async {
+    if (isFirstFetch) {
+      _cachedProducts.clear();
+      _firebaseService.resetPagination();
+      _hasMore = true;
+    }
 
-    if (query.isEmpty) return localProducts;
+    if (!_hasMore) return _cachedProducts;
 
-    String lowerQuery = query.toLowerCase().trim();
-    return localProducts.where((product) {
-      return product.title.toLowerCase().contains(lowerQuery) ||
-          product.description.toLowerCase().contains(lowerQuery);
-    }).toList();
+    List<Product> newProducts =
+        await _firebaseService.fetchProducts(isFirstFetch: isFirstFetch);
+
+    if (newProducts.isEmpty) {
+      _hasMore = false;
+    } else {
+      _cachedProducts.addAll(newProducts);
+      await syncProducts(newProducts);
+    }
+
+    return List.from(_cachedProducts);
   }
 
-  /// **Fetch and sync remote products**
-  Future<List<Product>> _fetchAndSyncProducts() async {
-    remoteProducts = await fetchRemoteProducts();
-    if (remoteProducts?.isEmpty ?? true) return [];
+  /// **Fetch local products with pagination**
+  Future<List<Product>> getLocalProducts([bool isFirstFetch = false]) async {
+    if (isFirstFetch) {
+      _cachedLocalProducts.clear();
+      _localHasMore = true;
+    }
 
-    await syncProducts(remoteProducts!);
-    return remoteProducts!;
+    if (!_localHasMore) return _cachedLocalProducts;
+
+    List<Product> newProducts = await _appDatabase.getPaginatedData(
+      AppDataBaseConstants.productsBox,
+      _cachedLocalProducts.length, // Offset
+      10, // Limit (fetch 10 at a time)
+    );
+
+    if (newProducts.isEmpty) {
+      _localHasMore = false;
+    } else {
+      _cachedLocalProducts.addAll(newProducts);
+    }
+
+    return List.from(_cachedLocalProducts);
+  }
+
+  /// **Search Products**
+  Future<List<Product>> searchProducts(String query) async {
+    bool isOnline = await getIt<ConnectivityService>().isConnected();
+
+    if (isOnline) {
+      return await _firebaseService.searchProducts(query);
+    } else {
+      var box =
+          await _appDatabase.openBox<Product>(AppDataBaseConstants.productsBox);
+      List<Product> allLocalProducts = box.values.toList();
+
+      return allLocalProducts
+          .where((product) =>
+              product.title.toLowerCase().contains(query.toLowerCase()))
+          .toList();
+    }
   }
 
   /// **Sync remote products with local storage**
@@ -75,10 +102,10 @@ class ProductRepository {
       if (updatedProducts.isNotEmpty) {
         await box.putAll(updatedProducts);
         _logger
-            .i("Synchronized ${updatedProducts.length} updated/new products.");
+            .i("Synchronized \${updatedProducts.length} updated/new products.");
       }
     } catch (e) {
-      _logger.e("Error syncing products: $e");
+      _logger.e("Error syncing products: \$e");
     }
   }
 
@@ -93,8 +120,13 @@ class ProductRepository {
             {'boxData': existingProducts, 'remoteProducts': remoteProducts});
   }
 
-  Future<List<Product>> getLocalProducts() async {
-    return await _appDatabase.getAllData(AppDataBaseConstants.productsBox);
+  void resetPagination() {
+    _firebaseService.resetPagination();
+    _cachedProducts.clear();
+    _hasMore = true;
+
+    _cachedLocalProducts.clear();
+    _localHasMore = true;
   }
 }
 

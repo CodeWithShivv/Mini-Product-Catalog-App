@@ -15,10 +15,11 @@ class AppDatabase {
       final appDocumentDirectory = await getApplicationDocumentsDirectory();
       Hive.init(appDocumentDirectory.path);
 
-      Hive.registerAdapter(ProductAdapter());
-      Hive.registerAdapter(RatingAdapter());
-      Hive.registerAdapter(CartItemAdapter());
-      Hive.registerAdapter(FavoritesEntityAdapter());
+      Hive
+        ..registerAdapter(ProductAdapter())
+        ..registerAdapter(RatingAdapter())
+        ..registerAdapter(CartItemAdapter())
+        ..registerAdapter(FavoritesEntityAdapter());
 
       logger.i("Hive initialized successfully.");
     } catch (e) {
@@ -64,6 +65,24 @@ class AppDatabase {
       return box.values.toList();
     } catch (e) {
       logger.e("Error getting all data from $boxName: $e");
+      return [];
+    }
+  }
+
+  /// **Get paginated data from local storage**
+  Future<List<T>> getPaginatedData<T>(
+      String boxName, int offset, int limit) async {
+    try {
+      var box = await Hive.openBox<T>(boxName);
+      List<T> allData = box.values.toList();
+
+      if (offset >= allData.length) {
+        return [];
+      }
+
+      return allData.skip(offset).take(limit).toList();
+    } catch (e) {
+      logger.e("Error fetching paginated data from $boxName: $e");
       return [];
     }
   }

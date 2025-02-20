@@ -3,42 +3,74 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mini_product_catalog_app/features/products_listing/bloc/product_event.dart';
 import 'package:mini_product_catalog_app/features/products_listing/bloc/product_state.dart';
 import 'package:mini_product_catalog_app/features/products_listing/data/repositories/product_repository.dart';
-import 'package:mini_product_catalog_app/core/services/connectivity_service.dart';
 import 'package:mini_product_catalog_app/features/products_listing/domain/entities/product.dart';
 
 class ProductBloc extends Bloc<ProductEvent, ProductState> {
   final ProductRepository productRepository;
-  final ConnectivityService connectivityService;
-  StreamSubscription<bool>? _connectivitySubscription;
+
   Timer? _searchDebounce;
-  List<Product> _allProducts = [];
+  final List<Product> _allProducts = [];
+  bool _isFetchingMore = false;
+  bool _hasMore = true;
 
   ProductBloc({
     required this.productRepository,
-    required this.connectivityService,
   }) : super(ProductInitial()) {
     on<FetchProducts>(_onFetchProducts);
     on<SearchProducts>(_onSearchProducts);
+    on<FetchMoreProducts>(_onFetchMoreProducts);
     on<ResetProducts>(_onInitialProductsSet);
-    _connectivitySubscription =
-        connectivityService.connectivityStream.listen((_) {
-      add(FetchProducts());
-    });
   }
 
   Future<void> _onInitialProductsSet(
-    ResetProducts event, Emitter<ProductState> emit) async {
-    emit(ProductLoaded(_allProducts));
+      ResetProducts event, Emitter<ProductState> emit) async {
+    emit(ProductLoaded(products: _allProducts, hasMore: _hasMore));
   }
 
   Future<void> _onFetchProducts(
       FetchProducts event, Emitter<ProductState> emit) async {
     emit(ProductLoading());
     try {
-      _allProducts = await productRepository.fetchProducts();
-      emit(ProductLoaded(_allProducts));
+      _allProducts.clear();
+      _hasMore = true;
+
+      final newProducts =
+          await productRepository.fetchProducts(isFirstFetch: true);
+
+      _allProducts.addAll(newProducts);
+      _hasMore = newProducts.isNotEmpty;
+
+      emit(ProductLoaded(products: List.from(_allProducts), hasMore: _hasMore));
     } catch (e) {
       emit(ProductError("Failed to load products"));
+    }
+  }
+
+  Future<void> _onFetchMoreProducts(
+      FetchMoreProducts event, Emitter<ProductState> emit) async {
+    if (_isFetchingMore || !_hasMore) return;
+
+    _isFetchingMore = true;
+
+    try {
+      final newProducts =
+          await productRepository.fetchProducts(isFirstFetch: false);
+
+      if (newProducts.isNotEmpty) {
+        _allProducts.addAll(newProducts);
+      }
+
+      // If the number of new products is less than pageSize (10), we have reached the end
+      _hasMore = newProducts.length == 10;
+
+      emit(ProductLoaded(
+          products: List.from(_allProducts),
+          hasMore: _hasMore,
+          isPaginating: false));
+    } catch (e) {
+      emit(ProductError("Failed to load more products"));
+    } finally {
+      _isFetchingMore = false;
     }
   }
 
@@ -51,7 +83,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       final query = event.query.toLowerCase().trim();
 
       if (query.isEmpty) {
-        emit(ProductLoaded(_allProducts));
+        emit(ProductLoaded(products: _allProducts, hasMore: _hasMore));
       } else {
         try {
           final searchResults = await productRepository.searchProducts(query);
@@ -63,12 +95,5 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       completer.complete();
     });
     await completer.future;
-  }
-
-  @override
-  Future<void> close() {
-    _connectivitySubscription?.cancel();
-    _searchDebounce?.cancel();
-    return super.close();
   }
 }

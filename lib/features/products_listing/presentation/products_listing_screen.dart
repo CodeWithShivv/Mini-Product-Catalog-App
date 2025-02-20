@@ -1,18 +1,17 @@
 import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mini_product_catalog_app/core/router/app_router.dart';
 import 'package:mini_product_catalog_app/core/widgets/lottie_loader.dart';
 import 'package:mini_product_catalog_app/features/cart/presentation/widgets/cart_widget.dart';
+import 'package:mini_product_catalog_app/features/connectivity/bloc/connectivity_bloc.dart';
+import 'package:mini_product_catalog_app/features/connectivity/bloc/connectivity_state.dart';
 import 'package:mini_product_catalog_app/features/favorites/presentation/widgets/favorites_icon.dart';
 import 'package:mini_product_catalog_app/features/products_listing/bloc/product_bloc.dart';
 import 'package:mini_product_catalog_app/features/products_listing/bloc/product_event.dart';
 import 'package:mini_product_catalog_app/features/products_listing/bloc/product_state.dart';
 import 'package:mini_product_catalog_app/core/services/dependency_locator.dart';
-import 'package:mini_product_catalog_app/features/products_listing/presentation/widgets/product_card.dart';
 import 'package:mini_product_catalog_app/features/products_listing/presentation/widgets/product_search_bar.dart';
-import 'package:mini_product_catalog_app/features/products_listing/presentation/widgets/skelton_product_grid.dart';
+import 'package:mini_product_catalog_app/features/products_listing/presentation/widgets/products_grid.dart';
 
 class ProductsListingScreen extends StatelessWidget {
   const ProductsListingScreen({super.key});
@@ -23,97 +22,106 @@ class ProductsListingScreen extends StatelessWidget {
     return BlocProvider(
       create: (context) => ProductBloc(
         productRepository: getIt(),
-        connectivityService: getIt(),
       )..add(FetchProducts()),
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text("Products"),
-          actions: [CartWidget(), FavoritesIconWidget()],
-        ),
-        body: GestureDetector(
-          onTap: () {
-            FocusScope.of(context).unfocus();
-          },
-          child: BlocConsumer<ProductBloc, ProductState>(
-            listener: (context, state) {
-              if (state is ProductError) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(state.message)),
-                );
-              }
-            },
-            builder: (context, state) {
-              final products = state is ProductSearchResults
-                  ? state.searchResults
-                  : state is ProductLoaded
-                      ? state.products
-                      : [];
+      child: BlocListener<ConnectivityBloc, ConnectivityState>(
+        listener: (BuildContext context, state) {
+          if (state is ConnectivityUpdated) {
+            // It will sync the products from app db
+            context.read<ProductBloc>().add(FetchProducts());
 
-              return CustomMaterialIndicator(
-                onRefresh: () async {
-                  context.read<ProductBloc>().add(FetchProducts());
-                },
-                backgroundColor: Colors.white,
-                indicatorBuilder: (context, controller) {
-                  return LottieLoader();
-                },
-                child: CustomScrollView(
-                  slivers: [
-                    _buildSliverAppBar(),
-                    _buildProductGrid(state, products),
-                  ],
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  state.isConnected
+                      ? "Back online!"
+                      : "No internet connection Working Offline",
                 ),
-              );
-            },
+                backgroundColor: state.isConnected ? Colors.green : Colors.red,
+              ),
+            );
+          }
+        },
+        child: Scaffold(
+          appBar: _buildAppBar(),
+          body: GestureDetector(
+            onTap: () => FocusScope.of(context).unfocus(),
+            child: BlocConsumer<ProductBloc, ProductState>(
+              listener: (context, state) {
+                if (state is ProductError) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(state.message)),
+                  );
+                }
+              },
+              builder: (context, state) {
+                final products = _getProductList(state);
+                final hasMore = state is ProductLoaded ? state.hasMore : false;
+
+                return NotificationListener<ScrollNotification>(
+                  onNotification: (scrollInfo) =>
+                      _handleScroll(context, scrollInfo, state),
+                  child: CustomMaterialIndicator(
+                    onRefresh: () async =>
+                        context.read<ProductBloc>().add(FetchProducts()),
+                    backgroundColor: Colors.white,
+                    indicatorBuilder: (_, __) => LottieLoader(),
+                    child: CustomScrollView(
+                      slivers: [
+                        _buildSliverAppBar(),
+                        ProductGrid(
+                            state: state, products: products, hasMore: hasMore)
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
           ),
         ),
       ),
     );
+  }
+
+  AppBar _buildAppBar() {
+    return AppBar(
+      title: const Text("Products"),
+      actions: const [CartWidget(), FavoritesIconWidget()],
+    );
+  }
+
+  List _getProductList(ProductState state) {
+    if (state is ProductSearchResults) {
+      return state.searchResults;
+    } else if (state is ProductLoaded || state is ProductPaginating) {
+      return (state as dynamic).products;
+    }
+    return [];
+  }
+
+  bool _handleScroll(
+      BuildContext context, ScrollNotification scrollInfo, ProductState state) {
+    if (scrollInfo.metrics.pixels >= scrollInfo.metrics.maxScrollExtent * 0.9 &&
+        state is ProductLoaded &&
+        state.hasMore) {
+      context.read<ProductBloc>().add(FetchMoreProducts());
+    }
+    return false;
   }
 
   SliverAppBar _buildSliverAppBar() {
     return SliverAppBar(
       expandedHeight: 70.0,
       pinned: true,
-      flexibleSpace: Container(
-        decoration: BoxDecoration(),
-        child: FlexibleSpaceBar(
-          title: const Text('Products', style: TextStyle(color: Colors.white)),
-        ),
+      flexibleSpace: const FlexibleSpaceBar(
+        title: Text('Products', style: TextStyle(color: Colors.white)),
       ),
       bottom: PreferredSize(
         preferredSize: const Size.fromHeight(40.0),
-        child: Container(
+        child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 14),
           child: ProductSearchBar(controller: controller),
         ),
       ),
     );
-  }
-
-  Widget _buildProductGrid(ProductState state, List products) {
-    if (state is ProductLoading) {
-      return const SliverSkeletonProductGrid();
-    } else if (products.isNotEmpty) {
-      return SliverPadding(
-        padding: const EdgeInsets.all(8),
-        sliver: SliverGrid(
-          delegate: SliverChildBuilderDelegate(
-            (context, index) => ProductCard(product: products[index]),
-            childCount: products.length,
-          ),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            crossAxisSpacing: 8,
-            mainAxisSpacing: 8,
-            childAspectRatio: 0.47,
-          ),
-        ),
-      );
-    } else {
-      return const SliverFillRemaining(
-        child: Center(child: Text("No products available.")),
-      );
-    }
   }
 }

@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
@@ -7,13 +6,14 @@ import 'package:logger/logger.dart';
 import 'package:mini_product_catalog_app/core/services/dependency_locator.dart';
 import 'package:mini_product_catalog_app/features/products_listing/domain/entities/product.dart';
 import 'package:mini_product_catalog_app/firebase_options.dart';
-import 'package:logger/logger.dart';
 import 'dart:convert';
 
 class FirebaseService {
   FirebaseService();
 
   final Logger _logger = getIt<Logger>();
+  DocumentSnapshot? _lastDocument; // Track last document for pagination
+  static const int pageSize = 10;
   late final FirebaseFirestore _firestore;
 
   Future<void> initialize() async {
@@ -22,7 +22,6 @@ class FirebaseService {
         options: DefaultFirebaseOptions.currentPlatform,
       );
       _firestore = FirebaseFirestore.instance;
-
       _logger.i("Firebase initialized successfully.");
     } catch (e) {
       _logger.e("Error initializing Firebase: $e");
@@ -32,21 +31,37 @@ class FirebaseService {
 
   FirebaseFirestore get firestore => _firestore;
 
-  Future<List<Product>> fetchProducts() async {
+  /// **Fetch paginated products from Firestore**
+  Future<List<Product>> fetchProducts({bool isFirstFetch = false}) async {
     try {
-      QuerySnapshot snapshot = await _firestore.collection('products').get();
-      List<Product> products = snapshot.docs.map((doc) {
+      Query query =
+          _firestore.collection('products').orderBy('id').limit(pageSize);
+
+      if (!isFirstFetch && _lastDocument != null) {
+        query = query.startAfterDocument(_lastDocument!);
+      }
+
+      QuerySnapshot snapshot = await query.get();
+
+      if (snapshot.docs.isNotEmpty) {
+        _lastDocument = snapshot.docs.last;
+      }
+
+      return snapshot.docs.map((doc) {
         return Product.fromJson(doc.data() as Map<String, dynamic>);
       }).toList();
-
-      _logger.i("Fetched ${products.length} products.");
-      return products;
     } catch (e) {
-      _logger.e("Error fetching products: $e");
+      log("Error fetching products: $e");
       return [];
     }
   }
 
+  /// **Reset pagination**
+  void resetPagination() {
+    _lastDocument = null;
+  }
+
+  /// **Search products in Firestore**
   Future<List<Product>> searchProducts(String query) async {
     try {
       String lowerQuery = query.toLowerCase().trim();
@@ -67,24 +82,18 @@ class FirebaseService {
     }
   }
 
-  /// Upload products from `assets/products.json` to Firestore (if not already uploaded)
+  /// **Upload products from JSON file to Firestore**
   Future<void> uploadProductsFromAssets() async {
     try {
-      // Load JSON from assets
       String jsonString =
           await rootBundle.loadString('assets/data/products.json');
-      ;
       List<dynamic> jsonData = json.decode(jsonString);
-
-      // Convert JSON data to Product objects
       List<Product> localProducts =
           jsonData.map((item) => Product.fromJson(item)).toList();
 
-      // Fetch existing products from Firebase
-      List<Product> remoteProducts = await fetchProducts();
+      List<Product> remoteProducts = await fetchProducts(isFirstFetch: true);
       Set<int> existingProductIds = remoteProducts.map((p) => p.id).toSet();
 
-      // Filter only new products (not present in Firebase)
       List<Product> newProducts = localProducts
           .where((product) => !existingProductIds.contains(product.id))
           .toList();
@@ -100,8 +109,9 @@ class FirebaseService {
     }
   }
 
+  /// **Upload products to Firestore**
   Future<void> uploadProducts(List<Product> products) async {
-    final collection = FirebaseFirestore.instance.collection('products');
+    final collection = _firestore.collection('products');
     for (var product in products) {
       await collection
           .doc(product.id.toString())

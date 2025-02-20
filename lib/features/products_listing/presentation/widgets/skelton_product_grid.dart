@@ -23,3 +23,4 @@ class SliverSkeletonProductGrid extends StatelessWidget {
     );
   }
 }
+
